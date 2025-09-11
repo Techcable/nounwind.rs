@@ -1,0 +1,44 @@
+[package]
+name = "nounwind"
+description = "A attribute macro to prevent panics from unwinding, similar to C++ noexcept"
+version = "0.1.0"
+readme = "README.md"
+license = "Apache-2.0 OR MIT"
+repository = "https://github.com/Techcable/nounwind.rs"
+# 1.56 - edition 2021
+# 1.61 - dep:foo and foo?/std syntax
+# 1.64 - workspace inheritance
+# 1.81 - unwinding through extern "C" triggers panics
+rust-version = "1.61"
+edition = "2021"
+categories = [
+    "no-std",
+    "no-std::no-alloc",
+    "rust-patterns",
+    "development-tools::ffi",
+]
+keywords = ["panic", "unwind", "exceptions", "noexcept", "abort"]
+
+
+[features]
+default = ["macros"]
+# Use the stdlib for aborting (only helpful on old versions)
+std = ["libabort/std"]
+# Define the #{nounwind] attribute macro
+macros = ["dep:nounwind-macros"]
+
+[dependencies]
+# Uses various strategies to allow aborting without the stdlib
+libabort = { version = "0.1", default-features = false }
+# Implementation of the #[nounwind] attribute macro
+nounwind-macros = { version = "0.1", path = "nounwind-macros", optional = true }
+rustversion = "1"
+
+[[example]]
+name = "macro"
+required-features = ["macros"]
+
+[workspace]
+resolver = "2"
+members = [".", "nounwind-macros"]
+default-members = [".", "nounwind-macros"]

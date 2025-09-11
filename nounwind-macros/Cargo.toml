@@ -1,0 +1,25 @@
+[package]
+name = "nounwind-macros"
+description = "Implementation of the #[nounwind] attribute macro"
+version = "0.1.0"
+readme = "../README.md"
+license = "Apache-2.0 OR MIT"
+repository = "https://github.com/Techcable/nounwind.rs"
+# Keep in sync with main `nounwind` crate
+rust-version = "1.61"
+edition = "2021"
+categories = [
+    "no-std",
+    "no-std::no-alloc",
+    "rust-patterns",
+    "development-tools::ffi",
+]
+keywords = ["panic", "unwind", "exceptions", "noexcept", "abort"]
+
+[lib]
+proc-macro = true
+
+[dependencies]
+syn = { version = "2", features = ["full"] }
+proc-macro2 = "1"
+quote = "1"
