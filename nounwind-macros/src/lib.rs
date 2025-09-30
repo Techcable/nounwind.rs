@@ -18,13 +18,13 @@ pub fn nounwind(
     item: proc_macro::TokenStream,
 ) -> proc_macro::TokenStream {
     let _: Empty = parse_macro_input!(attr as Empty);
-    let input = parse_macro_input!(item as syn::ItemFn);
+    let input = parse_macro_input!(item as syn_mid::ItemFn);
     do_nounwind(input)
         .unwrap_or_else(syn::Error::into_compile_error)
         .into()
 }
 
-fn do_nounwind(mut item: syn::ItemFn) -> syn::Result<TokenStream> {
+fn do_nounwind(mut item: syn_mid::ItemFn) -> syn::Result<TokenStream> {
     let old_block = std::mem::replace(
         &mut item.block,
         Box::new(parse_quote!({ compile_error!("dummy value") })),
