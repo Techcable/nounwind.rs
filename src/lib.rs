@@ -69,3 +69,52 @@ decl_abort_unwind! {
     #[inline(always)]
     pub fn abort_unwind(...);
 }
+
+/// Equivalent to [`core::panic!`], but guaranteed to abort the program instead of unwinding.
+///
+/// This is useful for fatal errors, which cannot possibly be recovered from.
+/// In particular, if proceeding could cause undefined behavior,
+/// this should be used instead of [`core::panic!`].
+/// Recovery from undefined behavior is definitionally impossible and unwinding would only worsen the problem.
+///
+/// This includes location information, just like [`core::panic!`] does.
+/// The [`panic_nounwind()`] function discards this information, decreasing the impact on code size along with the error quality.
+#[macro_export]
+macro_rules! panic_nounwind {
+    ($($arg:tt)*) => ($crate::panic_nounwind_fmt(format_args!($($arg)*)));
+}
+
+/// Triggers a [`core::panic!`] with the specified message, but guaranteed to abort instead of unwinding.
+///
+/// Discards location information to reduce code size in the caller (so does not have `#[track_caller]`).
+/// Use the [`panic_nounwind!`] macro if location information is desired.
+///
+/// See [`panic_nounwind!`] macro for examples and use cases.
+///
+/// This mirrors the [`core::panicking::panic_nounwind`] function in the standard library.
+/// This is part of the `panic_internals` nightly feature,
+/// and is used for fatal runtime errors inside of the stdlib.
+///
+/// [`core::panicking::panic_nounwind`]: https://github.com/rust-lang/rust/blob/1.92.0/library/core/src/panicking.rs#L222-L231
+#[cold]
+#[inline(never)]
+pub fn panic_nounwind(s: &'static str) -> ! {
+    crate::abort_unwind(|| panic!("{s}"))
+}
+
+/// Calls `panic!` with the specified message, but guaranteed to abort instead of unwinding.
+///
+/// This is an implementation detail of the [`panic_nounwind!`] macro,
+/// and is not part of the crate's public API.
+/// As such, it is exempt from semver guarantees.
+///
+/// This mirrors the [`core::panicking::panic_nounwind_fmt`] function in the standard library,
+/// but without the parameter controlling backtrace suppression.
+///
+/// [`core::panicking::panic_nounwind_fmt`]: https://github.com/rust-lang/rust/blob/1.92.0/library/core/src/panicking.rs#L83-L95
+#[inline(never)]
+#[cold]
+#[doc(hidden)]
+pub fn panic_nounwind_fmt(f: core::fmt::Arguments<'_>) -> ! {
+    crate::abort_unwind(|| panic!("{f}"))
+}
