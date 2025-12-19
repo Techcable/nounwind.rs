@@ -3,8 +3,9 @@ use std::process::{self, Command};
 use std::{env, str};
 
 pub fn main() {
-    let Some(rustc) = rustc_minor_version() else {
-        return;
+    let rustc = match rustc_minor_version() {
+        Some(x) => x,
+        None => return,
     };
 
     if rustc >= 80 {

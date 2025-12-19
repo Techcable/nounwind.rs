@@ -111,7 +111,7 @@ macro_rules! panic_nounwind {
 #[cold]
 #[inline(never)]
 pub fn panic_nounwind(s: &'static str) -> ! {
-    crate::abort_unwind(|| panic!("{s}"))
+    crate::abort_unwind(|| panic!("{}", s))
 }
 
 /// Calls `panic!` with the specified message, but guaranteed to abort instead of unwinding.
@@ -128,5 +128,5 @@ pub fn panic_nounwind(s: &'static str) -> ! {
 #[cold]
 #[doc(hidden)]
 pub fn panic_nounwind_fmt(f: core::fmt::Arguments<'_>) -> ! {
-    crate::abort_unwind(|| panic!("{f}"))
+    crate::abort_unwind(|| panic!("{}", f))
 }

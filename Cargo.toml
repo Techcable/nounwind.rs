@@ -9,7 +9,7 @@ repository = "https://github.com/Techcable/nounwind.rs"
 # 1.61 - dep:foo and foo?/std syntax
 # 1.64 - workspace inheritance
 # 1.81 - unwinding through extern "C" triggers panics
-rust-version = "1.61"
+rust-version = "1.56"
 edition = "2021"
 categories = [
     "no-std",
@@ -28,11 +28,11 @@ default = ["macros", "old-rust-nostd"]
 # If this is enabled, the `old-rust-nostd` feature is not needed.
 std = []
 # Define the #{nounwind] attribute macro
-macros = ["dep:nounwind-macros"]
+macros = ["nounwind-macros"]
 # Support versions of rust before 1.81 without needing the stdlib.
 #
 # Using the `std` feature is always preferable.
-old-rust-nostd = ["dep:libabort"]
+old-rust-nostd = ["libabort"]
 
 [dependencies]
 # Uses various strategies to allow aborting without the stdlib
