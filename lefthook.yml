@@ -27,6 +27,10 @@ pre-commit:
       glob:
         - "src/lib.rs"
         - "README.md"
+    cargo-sort:
+      tags: formatter
+      glob: "*.toml"
+      run: cargo sort --grouped --workspace --check . >/dev/null
 # takes one parameter - the file with the proposed commit message
 # access through lefthook with `{1}`
 #

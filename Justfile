@@ -13,6 +13,7 @@ check: check-format
 check-format: && spellcheck
     taplo format
     cargo +nightly fmt --check
+    cargo sort --grouped --workspace --check . >/dev/null
 
 spellcheck:
     typos

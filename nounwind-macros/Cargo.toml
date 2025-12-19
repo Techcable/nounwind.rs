@@ -20,7 +20,7 @@ keywords = ["panic", "unwind", "exceptions", "noexcept", "abort"]
 proc-macro = true
 
 [dependencies]
-syn = "2"
-syn-mid = "0.6"
 proc-macro2 = "1"
 quote = "1"
+syn = "2"
+syn-mid = "0.6"

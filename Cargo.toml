@@ -19,6 +19,10 @@ categories = [
 ]
 keywords = ["panic", "unwind", "exceptions", "noexcept", "abort"]
 
+[workspace]
+resolver = "2"
+members = [".", "nounwind-macros"]
+default-members = [".", "nounwind-macros"]
 
 [features]
 default = ["macros", "old-rust-nostd"]
@@ -43,8 +47,3 @@ nounwind-macros = { version = "0.1", path = "nounwind-macros", optional = true }
 [[example]]
 name = "macro"
 required-features = ["macros"]
-
-[workspace]
-resolver = "2"
-members = [".", "nounwind-macros"]
-default-members = [".", "nounwind-macros"]
