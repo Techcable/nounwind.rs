@@ -47,9 +47,21 @@ macro_rules! decl_abort_unwind {
         #[cfg(not(nounwind_extern_c_will_abort))]
         $(#[$common_attr])*
         pub fn abort_unwind<F: FnOnce() -> R, R>(func: F) -> R {
-            let guard = libabort::AbortGuard::new();
+            struct AbortGuard;
+            impl Drop for AbortGuard {
+                #[inline]
+                fn drop(&mut self) {
+                    #[cfg(feature = "std")]
+                    std::process::abort();
+                    #[cfg(all(feature = "old-rust-nostd", not(feature = "std")))]
+                    libabort::abort();
+                    #[cfg(all(not(feature = "old-rust-nostd"), not(feature = "std")))]
+                    compile_error!(r#"Using the `nounwind` crate with this version of rust requires either `feature = "std"` or `feature = "old-rust-nostd"`"#);
+                }
+            }
+            let guard = AbortGuard;
             let res = func();
-            guard.defuse();
+            core::mem::forget(guard);
             res
         }
     }

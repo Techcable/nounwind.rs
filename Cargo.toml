@@ -21,15 +21,22 @@ keywords = ["panic", "unwind", "exceptions", "noexcept", "abort"]
 
 
 [features]
-default = ["macros"]
-# Use the stdlib for aborting (only helpful on old versions)
-std = ["libabort/std"]
+default = ["macros", "old-rust-nostd"]
+# Use the stdlib for aborting,
+# in order to support versions of rust before 1.81
+#
+# If this is enabled, the `old-rust-nostd` feature is not needed.
+std = []
 # Define the #{nounwind] attribute macro
 macros = ["dep:nounwind-macros"]
+# Support versions of rust before 1.81 without needing the stdlib.
+#
+# Using the `std` feature is always preferable.
+old-rust-nostd = ["dep:libabort"]
 
 [dependencies]
 # Uses various strategies to allow aborting without the stdlib
-libabort = { version = "0.1", default-features = false }
+libabort = { version = "0.1", default-features = false, optional = true }
 # Implementation of the #[nounwind] attribute macro
 nounwind-macros = { version = "0.1", path = "nounwind-macros", optional = true }
 
