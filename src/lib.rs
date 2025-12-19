@@ -1,17 +1,28 @@
 //! Defines a `#[nounwind]` attribute macro that prevents panics from unwinding,
 //! similar to the C++ [`noexcept` specifier].
 //!
-//! This is clearer than using a drop guard,
-//! and in some versions of Rust can provide a better error message.
-//! In particular, aborting panics will often print a messages like "panic in a function that cannot unwind",
-//! although this behavior is version-specific and not guaranteed to occur.
+//!
+//! The [`panic_nounwind!`] macro offers a version of [`core::panic!`] that is guaranteed to abort instead of unwinding.
+//! This is useful for fatal errors which cannot possibly be recovered from.
+//! In particular, if proceeding could cause undefined behavior,
+//! [`panic_nounwind!`] should be used instead of [`core::panic!`].
 //!
 //! The crate also provides a polyfill for the nightly [`std::panic::abort_unwind`] function.
-//! The `#[noexcept]` attribute is implemented in terms of this function.
+//! This provides more detailed control over what sections of code can and cannot panic.
+//! It can also be used as a replacement to `#[nounwind]` if you want to avoid a macro dependency.
 //!
-//! On older versions, this requires use of [`libabort`] to abort the program.
-//! This is necessary to support aborts in `#[no_std]` mode.
-//! Enabling the `std` feature simply makes libabort delegate to [`std::process::abort`].
+//! Using `#[nounwind]` is clearer than using a drop guard,
+//! and in some versions of Rust can provide a better error message.
+//! In particular, on recent versions of rust using `#[nounwind]` will print a messages like "panic in a function that cannot unwind".
+//!
+//! Using [`panic_nounwind!`] is preferable to `abort_unwind(|| panic!(..))`, for reasons described in the [`abort_unwind`] docs.
+//!
+//! # Feature Flags
+//! The `std` feature provides superior error messages, so should be enabled wherever possible.
+//!
+//! If the `std` feature cannot be enabled, and supporting versions of rust before 1.81 is needed,
+//! enable the `old-rust-nostd` feature.
+//! This will use [`libabort`] to provide a polyfill for [`std::process::abort`].
 //!
 //! [`libabort`]: https://github.com/Techcable/libabort.rs
 //! [`std::panic::abort_unwind`]: https://doc.rust-lang.org/nightly/std/panic/fn.abort_unwind.html
@@ -47,22 +58,33 @@ macro_rules! decl_abort_unwind {
         #[cfg(not(nounwind_extern_c_will_abort))]
         $(#[$common_attr])*
         pub fn abort_unwind<F: FnOnce() -> R, R>(func: F) -> R {
-            struct AbortGuard;
-            impl Drop for AbortGuard {
-                #[inline]
-                fn drop(&mut self) {
-                    #[cfg(feature = "std")]
-                    std::process::abort();
-                    #[cfg(all(feature = "old-rust-nostd", not(feature = "std")))]
-                    libabort::abort();
-                    #[cfg(all(not(feature = "old-rust-nostd"), not(feature = "std")))]
-                    compile_error!(r#"Using the `nounwind` crate with this version of rust requires either `feature = "std"` or `feature = "old-rust-nostd"`"#);
-                }
-            }
-            let guard = AbortGuard;
+            #[cfg(any(feature = "std", feature = "old-rust-nostd"))]
+            let guard = abort_guard::AbortGuard;
+            #[cfg(all(not(feature = "old-rust-nostd"), not(feature = "std")))]
+            let guard = {
+                compile_error!(
+                    r#"Using the `nounwind` crate with this version of rust requires either `feature = "std"` or `feature = "old-rust-nostd"`"#
+                );
+                ()
+            };
             let res = func();
             core::mem::forget(guard);
             res
+        }
+    }
+}
+
+#[cfg(any(feature = "std", feature = "old-rust-nostd"))]
+mod abort_guard {
+    #[allow(unused)]
+    pub struct AbortGuard;
+    impl Drop for AbortGuard {
+        #[inline]
+        fn drop(&mut self) {
+            #[cfg(feature = "std")]
+            std::process::abort();
+            #[cfg(all(feature = "old-rust-nostd", not(feature = "std")))]
+            libabort::abort();
         }
     }
 }
@@ -72,10 +94,19 @@ decl_abort_unwind! {
     ///
     /// This is equivalent to the nightly-only [`std::panic::abort_unwind`] function.
     ///
-    /// Where possible, this will include a panic message like "panic in a function that cannot unwind".
-    /// However, this sort of message is not guaranteed.
+    /// Prefer the [`panic_nounwind!`] macro to `abort_unwind(|| panic!(...))`,
+    /// as the first gives a confusing error message.
     ///
-    /// On older versions, this will fall back to using [`libabort`](https://github.com/Techcable/libabort.rs).
+    /// As of Rust 1.92, this will print a second panic message "panic in a function that cannot unwind".
+    /// This is usually a desirable outcome, but also explains why `abort_unwind(|| panic!(user_msg))` gives a confusing message.
+    /// The "panic in a function that cannot unwind" message is printed after `user_msg` is, obscuring the real panic message.
+    /// To make matters worse, the second backtrace is enabled by default,
+    /// whereas the first is disabled by default.
+    /// This makes it even harder to notice the real error message.
+    /// Using [`panic_nounwind!`] avoids that.
+    ///
+    /// On older versions of Rust, and when `feature = "std"` is not enabled,
+    /// this will fall back to using [`libabort`](https://github.com/Techcable/libabort.rs).
     ///
     /// [`std::panic::abort_unwind`]: https://doc.rust-lang.org/nightly/std/panic/fn.abort_unwind.html
     #[inline(always)]
@@ -111,7 +142,7 @@ macro_rules! panic_nounwind {
 #[cold]
 #[inline(never)]
 pub fn panic_nounwind(s: &'static str) -> ! {
-    crate::abort_unwind(|| panic!("{}", s))
+    panic_nounwind_fmt(format_args!("{}", s))
 }
 
 /// Calls `panic!` with the specified message, but guaranteed to abort instead of unwinding.
@@ -128,5 +159,20 @@ pub fn panic_nounwind(s: &'static str) -> ! {
 #[cold]
 #[doc(hidden)]
 pub fn panic_nounwind_fmt(f: core::fmt::Arguments<'_>) -> ! {
-    crate::abort_unwind(|| panic!("{}", f))
+    // This gives a better error message than using abort_unwind.
+    // That rints two panic messages: First the real panic message,
+    // and second a "panic in a function which can't unwind".
+    // Even worse, the second message always includes a backtrace
+    // unrelated to the real backtrace.
+    //
+    // TODO: Take advantage of libabort or something like it to provide these better messages on #[no_std]
+    #[cfg(feature = "std")]
+    {
+        let _guard = abort_guard::AbortGuard;
+        panic!("{}", f)
+    }
+    #[cfg(not(feature = "std"))]
+    {
+        crate::abort_unwind(|| panic!("{}", f))
+    }
 }

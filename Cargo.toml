@@ -25,9 +25,10 @@ members = [".", "nounwind-macros"]
 default-members = [".", "nounwind-macros"]
 
 [features]
+# In v0.2.0, the `std` feature will be enabled by default
 default = ["macros", "old-rust-nostd"]
-# Use the stdlib for aborting,
-# in order to support versions of rust before 1.81
+# Take advantage of the stdlib, to provide better error messages
+# and support older versions of rust.
 #
 # If this is enabled, the `old-rust-nostd` feature is not needed.
 std = []
