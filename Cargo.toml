@@ -32,7 +32,6 @@ macros = ["dep:nounwind-macros"]
 libabort = { version = "0.1", default-features = false }
 # Implementation of the #[nounwind] attribute macro
 nounwind-macros = { version = "0.1", path = "nounwind-macros", optional = true }
-rustversion = "1"
 
 [[example]]
 name = "macro"

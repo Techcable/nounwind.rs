@@ -38,13 +38,13 @@ macro_rules! decl_abort_unwind {
         $(#[$common_attr:meta])*
         pub fn abort_unwind(...);
     ) => {
-        #[rustversion::since(1.81)]
+        #[cfg(nounwind_extern_c_will_abort)]
         $(#[$common_attr])*
         pub extern "C" fn abort_unwind<F: FnOnce() -> R, R>(func: F) -> R {
             func()
         }
 
-        #[rustversion::before(1.81)]
+        #[cfg(not(nounwind_extern_c_will_abort))]
         $(#[$common_attr])*
         pub fn abort_unwind<F: FnOnce() -> R, R>(func: F) -> R {
             let guard = libabort::AbortGuard::new();
