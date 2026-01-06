@@ -42,9 +42,16 @@ jobs:
         # NOTE: Features to test must be specified manually. They are applied to all versions separately.
         features:
           - "std"
-          - "macros"
           - "macros std"
-          - ""
+        include:
+          - rust: stable
+            features: "std macros"
+          - rust: 1.61
+            features: "old-rust-nostd"
+          - rust: stable
+            features: ""
+          - rust: nightly
+            features: ""
     steps:
       - uses: actions/checkout@v5
       - uses: dtolnay/rust-toolchain@master
