@@ -121,7 +121,6 @@ decl_abort_unwind! {
 /// Recovery from undefined behavior is definitionally impossible and unwinding would only worsen the problem.
 ///
 /// This includes location information, just like [`core::panic!`] does.
-/// The [`panic_nounwind()`] function discards this information, decreasing the impact on code size along with the error quality.
 #[macro_export]
 macro_rules! panic_nounwind {
     ($($arg:tt)*) => ($crate::panic_nounwind_fmt(format_args!($($arg)*)));
@@ -129,18 +128,20 @@ macro_rules! panic_nounwind {
 
 /// Triggers a [`core::panic!`] with the specified message, but guaranteed to abort instead of unwinding.
 ///
-/// Discards location information to reduce code size in the caller (so does not have `#[track_caller]`).
-/// Use the [`panic_nounwind!`] macro if location information is desired.
-///
 /// See [`panic_nounwind!`] macro for examples and use cases.
 ///
 /// This mirrors the [`core::panicking::panic_nounwind`] function in the standard library.
 /// This is part of the `panic_internals` nightly feature,
 /// and is used for fatal runtime errors inside of the stdlib.
 ///
+/// This function preserves location information (it is marked with `#[track_caller]`).
+/// This slightly increases code size in the caller,
+/// which can avoided by outlining the panic call or switching to [`std::process::abort`].
+///
 /// [`core::panicking::panic_nounwind`]: https://github.com/rust-lang/rust/blob/1.92.0/library/core/src/panicking.rs#L222-L231
 #[cold]
 #[inline(never)]
+#[track_caller]
 pub fn panic_nounwind(s: &'static str) -> ! {
     panic_nounwind_fmt(format_args!("{}", s))
 }
