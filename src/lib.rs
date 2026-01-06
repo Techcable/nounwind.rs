@@ -1,11 +1,12 @@
 //! Defines a `#[nounwind]` attribute macro that prevents panics from unwinding,
 //! similar to the C++ [`noexcept` specifier].
 //!
-//!
 //! The [`panic_nounwind!`] macro offers a version of [`core::panic!`] that is guaranteed to abort instead of unwinding.
 //! This is useful for fatal errors which cannot possibly be recovered from.
 //! In particular, if proceeding could cause undefined behavior,
 //! [`panic_nounwind!`] should be used instead of [`core::panic!`].
+//! Similar [`assert_nounwind!`] and [`unreachable_nounwind!`] macros are offered,
+//! which are convenience wrappers around [`panic_nounwind!`].
 //!
 //! The crate also provides a polyfill for the nightly [`std::panic::abort_unwind`] function.
 //! This provides more detailed control over what sections of code can and cannot panic.
@@ -126,6 +127,48 @@ macro_rules! panic_nounwind {
     ($($arg:tt)*) => ($crate::panic_nounwind_fmt(format_args!($($arg)*)));
 }
 
+/// Equivalent to [`core::assert!`], but guaranteed to abort the program instead of unwinding.
+///
+/// This function is useful for checking invalid state which cannot possibly be repaired.
+/// In particular, this is more appropriate than [`core::assert!`] for checking soundess errors.
+/// See the [`panic_nounwind!`] macro and [`unreachable_nounwind!`] for details.
+#[macro_export]
+macro_rules! assert_nounwind {
+    ($cond:expr) => {
+        if !($cond) {
+            $crate::panic_nounwind(concat!("assertion failed: ", stringify!($cond)));
+        };
+    };
+    ($cond:expr, $($arg:tt)+) => {
+        if !($cond) {
+            $crate::panic_nounwind_fmt(format_args!($($arg)*));
+        }
+    }
+}
+
+/// Equivalent to [`core::unreachable!`], but guaranteed to abort the program instead of unwinding.
+///
+/// This function is useful if it would be undefined behavior to continue.
+/// See the [`panic_nounwind!`] macro for details.
+#[macro_export]
+macro_rules! unreachable_nounwind {
+    () => ($crate::unreachable_nounwind());
+    ($($arg:tt)+) => {
+        $crate::panic_nounwind!(
+            "internal error: entered unreachable code: {}",
+            format_args!($($arg)*)
+        );
+    }
+}
+
+#[cold]
+#[inline(never)]
+#[track_caller]
+#[doc(hidden)]
+pub fn unreachable_nounwind() -> ! {
+    panic_nounwind("internal error: entered unreachable code")
+}
+
 /// Triggers a [`core::panic!`] with the specified message, but guaranteed to abort instead of unwinding.
 ///
 /// See [`panic_nounwind!`] macro for examples and use cases.
@@ -139,6 +182,7 @@ macro_rules! panic_nounwind {
 /// which can avoided by outlining the panic call or switching to [`std::process::abort`].
 ///
 /// [`core::panicking::panic_nounwind`]: https://github.com/rust-lang/rust/blob/1.92.0/library/core/src/panicking.rs#L222-L231
+/// [`std::process::abort`]: https://doc.rust-lang.org/std/process/fn.abort.html
 #[cold]
 #[inline(never)]
 #[track_caller]

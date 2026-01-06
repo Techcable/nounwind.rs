@@ -4,11 +4,12 @@
 Defines a `#[nounwind]` attribute macro that prevents panics from unwinding,
 similar to the C++ [`noexcept` specifier].
 
-
 The [`panic_nounwind!`] macro offers a version of [`core::panic!`] that is guaranteed to abort instead of unwinding.
 This is useful for fatal errors which cannot possibly be recovered from.
 In particular, if proceeding could cause undefined behavior,
 [`panic_nounwind!`] should be used instead of [`core::panic!`].
+Similar [`assert_nounwind!`] and [`unreachable_nounwind!`] macros are offered,
+which are convenience wrappers around [`panic_nounwind!`].
 
 The crate also provides a polyfill for the nightly [`std::panic::abort_unwind`] function.
 This provides more detailed control over what sections of code can and cannot panic.
