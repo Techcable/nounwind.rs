@@ -61,6 +61,14 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-cargo-
         continue-on-error: false
+      - name: Pin MSRV-compatible versions
+        if: ${{ contains(matrix.rust, '1.') }}
+        env:
+          # this option is where the magic happens
+          CARGO_RESOLVER_INCOMPATIBLE_RUST_VERSIONS: fallback
+        run: |
+          rm -f Cargo.lock
+          cargo +stable update
       - name: Test
         # NOTE: Running --all-targets does not include doc tests
         # Does not compile benchmarks because they break on MSRV. Still checked by clippy
