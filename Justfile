@@ -6,7 +6,7 @@ format: && spellcheck
 check: check-format
     -just spellcheck
     cargo clippy --workspace --all-targets
-    cargo doc --no-deps
+    cargo doc --workspace --no-deps --document-private-items
     cargo rdme --check
     lychee README.md
 
