@@ -32,6 +32,9 @@
 #![cfg_attr(docsrs, feature(doc_cfg))]
 #![cfg_attr(not(feature = "std"), no_std)]
 
+#[doc(hidden)]
+pub mod panic_internals;
+
 /// Indicates that a function should abort when panicking rather than unwinding.
 ///
 /// This is equivalent to the C++ [`noexcept` specifier],
@@ -170,7 +173,7 @@ decl_abort_unwind! {
 /// ```
 #[macro_export]
 macro_rules! panic_nounwind {
-    ($($arg:tt)*) => ($crate::panic_nounwind_fmt(format_args!($($arg)*)));
+    ($($arg:tt)*) => ($crate::panic_internals::panic_nounwind_fmt(format_args!($($arg)*)));
 }
 
 /// Equivalent to [`core::assert!`], but guaranteed to abort the program instead of unwinding.
@@ -196,7 +199,7 @@ macro_rules! assert_nounwind {
     };
     ($cond:expr, $($arg:tt)+) => {
         if !($cond) {
-            $crate::panic_nounwind_fmt(format_args!($($arg)*));
+            $crate::panic_internals::panic_nounwind_fmt(format_args!($($arg)*));
         }
     }
 }
@@ -228,21 +231,13 @@ macro_rules! assert_nounwind {
 /// ```
 #[macro_export]
 macro_rules! unreachable_nounwind {
-    () => ($crate::unreachable_nounwind());
+    () => ($crate::panic_internals::unreachable_nounwind());
     ($($arg:tt)+) => {
         $crate::panic_nounwind!(
             "internal error: entered unreachable code: {}",
             format_args!($($arg)*)
         );
     }
-}
-
-#[cold]
-#[inline(never)]
-#[track_caller]
-#[doc(hidden)]
-pub fn unreachable_nounwind() -> ! {
-    panic_nounwind("internal error: entered unreachable code")
 }
 
 /// Triggers a [`core::panic!`] with the specified message, but guaranteed to abort instead of unwinding.
@@ -269,37 +264,5 @@ pub fn unreachable_nounwind() -> ! {
 #[inline(never)]
 #[track_caller]
 pub fn panic_nounwind(s: &'static str) -> ! {
-    panic_nounwind_fmt(format_args!("{}", s))
-}
-
-/// Calls `panic!` with the specified message, but guaranteed to abort instead of unwinding.
-///
-/// This is an implementation detail of the [`panic_nounwind!`] macro,
-/// and is not part of the crate's public API.
-/// As such, it is exempt from semver guarantees.
-///
-/// This mirrors the [`core::panicking::panic_nounwind_fmt`] function in the standard library,
-/// but without the parameter controlling backtrace suppression.
-///
-/// [`core::panicking::panic_nounwind_fmt`]: https://github.com/rust-lang/rust/blob/1.92.0/library/core/src/panicking.rs#L83-L95
-#[inline(never)]
-#[cold]
-#[doc(hidden)]
-pub fn panic_nounwind_fmt(f: core::fmt::Arguments<'_>) -> ! {
-    // This gives a better error message than using abort_unwind.
-    // That rints two panic messages: First the real panic message,
-    // and second a "panic in a function which can't unwind".
-    // Even worse, the second message always includes a backtrace
-    // unrelated to the real backtrace.
-    //
-    // TODO: Take advantage of libabort or something like it to provide these better messages on #[no_std]
-    #[cfg(feature = "std")]
-    {
-        let _guard = abort_guard::AbortGuard;
-        panic!("{}", f)
-    }
-    #[cfg(not(feature = "std"))]
-    {
-        crate::abort_unwind(|| panic!("{}", f))
-    }
+    panic_internals::panic_nounwind_fmt(format_args!("{}", s))
 }
