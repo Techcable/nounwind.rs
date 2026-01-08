@@ -173,7 +173,10 @@ decl_abort_unwind! {
 /// ```
 #[macro_export]
 macro_rules! panic_nounwind {
-    ($($arg:tt)*) => ($crate::panic_internals::panic_nounwind_fmt(format_args!($($arg)*)));
+    ($($arg:tt)*) => {
+        // call helper function that optimizes for constant strings
+        $crate::panic_internals::do_panic_nounwind(format_args!($($arg)*))
+    };
 }
 
 /// Equivalent to [`core::assert!`], but guaranteed to abort the program instead of unwinding.
@@ -199,7 +202,7 @@ macro_rules! assert_nounwind {
     };
     ($cond:expr, $($arg:tt)+) => {
         if !($cond) {
-            $crate::panic_internals::panic_nounwind_fmt(format_args!($($arg)*));
+            $crate::panic_nounwind!($($arg)*);
         }
     }
 }
@@ -233,6 +236,9 @@ macro_rules! assert_nounwind {
 macro_rules! unreachable_nounwind {
     () => ($crate::panic_internals::unreachable_nounwind());
     ($($arg:tt)+) => {
+        // if the format string is a literal string,
+        // the rust compiler will optimize this nested formatting into a constant message
+        // So `unreachable_nowunind!("msg")` lowers directly to `nounwind_panic("...")`
         $crate::panic_nounwind!(
             "internal error: entered unreachable code: {}",
             format_args!($($arg)*)
