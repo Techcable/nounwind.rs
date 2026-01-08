@@ -3,6 +3,7 @@ use std::process::{self, Command};
 use std::{env, str};
 
 pub fn main() {
+    println!("cargo:rerun-if-changed=build.rs");
     let rustc = match rustc_minor_version() {
         Some(x) => x,
         None => return,
