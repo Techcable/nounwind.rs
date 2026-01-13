@@ -47,6 +47,7 @@ pub fn unreachable_nounwind() -> ! {
 ///
 /// The code size difference appears to be more significant on x86_64 than aarch64.
 #[inline(always)]
+#[track_caller]
 pub fn do_panic_nounwind(args: core::fmt::Arguments<'_>) -> ! {
     if let Some(msg) = args.as_str() {
         crate::panic_nounwind(msg)
@@ -65,6 +66,7 @@ pub fn do_panic_nounwind(args: core::fmt::Arguments<'_>) -> ! {
 /// but without the parameter controlling backtrace suppression.
 ///
 /// [`core::panicking::panic_nounwind_fmt`]: https://github.com/rust-lang/rust/blob/1.92.0/library/core/src/panicking.rs#L83-L95
+#[track_caller]
 #[inline(never)]
 #[cold]
 pub fn panic_nounwind_fmt(f: core::fmt::Arguments<'_>) -> ! {
