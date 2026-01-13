@@ -1,7 +1,7 @@
 [package]
 name = "nounwind"
 description = "A attribute macro to prevent panics from unwinding, similar to C++ noexcept"
-version = "0.1.4"
+version = "0.1.5"
 readme = "README.md"
 license = "Apache-2.0 OR MIT"
 repository = "https://github.com/Techcable/nounwind.rs"
