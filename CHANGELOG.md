@@ -14,6 +14,9 @@ Old versions (before v0.1.6) were retroactively given CHANGELOG entries based on
 
 ## Unreleased
 
+## 0.1.6 - 2026-09-23
+Avoid trailing semicolon in expression macros.
+
 ### Added
 - Provide `abort_on_unwind` alias for `abort_unwind` (xlmslqwq)
   - For consistency with the stdlib renaming `abort_unwind` to `abort_on_unwind`
@@ -29,6 +32,8 @@ Old versions (before v0.1.6) were retroactively given CHANGELOG entries based on
 - Remove dead doc references to `std::panic::abort_unwind` (nxooollt)
   - Renamed to `std::panic::abort_on_unwind`
 - Allow trailing comma in single-argument `assert_nounwind!` (qtkroysn)
+
+No changes to `nounwind-macros` since v0.1.1.
 
 [rust#162872]: https://github.com/rust-lang/rust/issues/162872
 
