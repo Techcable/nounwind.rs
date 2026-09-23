@@ -44,13 +44,12 @@ jobs:
         features:
           - "std"
           - "macros std"
+          - "old-rust-nostd"
         exclude_args:
           - ""
         include:
           - rust: stable
             features: "std macros"
-          - rust: 1.61
-            features: "old-rust-nostd"
           - rust: 1.56
             features: "old-rust-nostd"
             # Need to exclude the macros crate, as its MSRV is newer than 1.56
