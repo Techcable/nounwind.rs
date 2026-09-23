@@ -203,7 +203,7 @@ macro_rules! panic_nounwind {
 /// ```
 #[macro_export]
 macro_rules! assert_nounwind {
-    ($cond:expr) => {
+    ($cond:expr $(,)?) => {
         if !($cond) {
             $crate::panic_nounwind(concat!("assertion failed: ", stringify!($cond)));
         };
@@ -303,5 +303,16 @@ mod compile_tests {
             assert_nounwind!(false, "what happened?");
             assert_nounwind!(false, "what happened at {} PM?", 6);
         });
+    }
+
+    #[test]
+    fn trailing_commas() {
+        #[allow(unreachable_code)]
+        compile_test(|| {
+            panic_nounwind!("trailing",);
+            unreachable_nounwind!("commas",);
+            assert_nounwind!(false, "rule?",);
+            assert_nounwind!(true,);
+        })
     }
 }

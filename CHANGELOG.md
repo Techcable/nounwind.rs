@@ -25,6 +25,7 @@ Old versions (before v0.1.6) were retroactively given CHANGELOG entries based on
 ### Fixed
 - Remove dead doc references to `std::panic::abort_unwind` (nxooollt)
   - Renamed to `std::panic::abort_on_unwind`
+- Allow trailing comma in single-argument `assert_nounwind!` (qtkroysn)
 
 ### Changed
 - Do not track `Cargo.lock` in version control (yqxpqkkz)
