@@ -8,7 +8,8 @@
 //! Similar [`assert_nounwind!`] and [`unreachable_nounwind!`] macros are offered,
 //! which are convenience wrappers around [`panic_nounwind!`].
 //!
-//! The crate also provides a polyfill for the nightly [`std::panic::abort_on_unwind`] function.
+//! The crate also provides a polyfill for the nightly [`std::panic::abort_on_unwind`] function
+//! (previously called `abort_unwind`).
 //! This provides more detailed control over what sections of code can and cannot panic.
 //! It can also be used as a replacement to `#[nounwind]` if you want to avoid a macro dependency.
 //!
@@ -105,7 +106,9 @@ mod abort_guard {
 decl_abort_unwind! {
     /// Invokes a closure, aborting if the closure unwinds.
     ///
-    /// This is equivalent to the nightly-only [`std::panic::abort_on_unwind`] function.
+    /// This is equivalent to the nightly-only [`std::panic::abort_on_unwind`] function (previously called `abort_unwind`).
+    /// The crate provides a [`abort_on_unwind`] alias for this function,
+    /// while keeping the old name for backwards compatibility.
     ///
     /// Prefer the [`panic_nounwind!`] macro to `abort_unwind(|| panic!(...))`,
     /// as the first gives a confusing error message.
@@ -135,6 +138,9 @@ decl_abort_unwind! {
     #[inline(always)]
     pub fn abort_unwind(...);
 }
+
+/// Alias for [`abort_unwind`] to reflect the new name in the stdlib.
+pub use abort_unwind as abort_on_unwind;
 
 /// Equivalent to [`core::panic!`], but guaranteed to abort the program instead of unwinding.
 ///

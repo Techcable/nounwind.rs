@@ -17,7 +17,8 @@ In particular, if proceeding could cause undefined behavior,
 Similar [`assert_nounwind!`](https://docs.rs/nounwind/latest/nounwind/macro.assert_nounwind.html) and [`unreachable_nounwind!`](https://docs.rs/nounwind/latest/nounwind/macro.unreachable_nounwind.html) macros are offered,
 which are convenience wrappers around [`panic_nounwind!`](https://docs.rs/nounwind/latest/nounwind/macro.panic_nounwind.html).
 
-The crate also provides a polyfill for the nightly [`std::panic::abort_on_unwind`] function.
+The crate also provides a polyfill for the nightly [`std::panic::abort_on_unwind`] function
+(previously called `abort_unwind`).
 This provides more detailed control over what sections of code can and cannot panic.
 It can also be used as a replacement to `#[nounwind]` if you want to avoid a macro dependency.
 
