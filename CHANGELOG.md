@@ -18,6 +18,10 @@ Old versions (before v0.1.6) were retroactively given CHANGELOG entries based on
 - In examples and tests, avoid using `format!` with local variable references. (nllntsny)
   - Fixes examples and tests failing to compile on the MSRV of 1.56.
   - This issue cannot affect any of our dependencies.
+- ci: Ensure we test the `nounwind` MSRV of 1.56 (1.56).
+  - Before this, we were only testing the newer `unwind-macro` MSRV of 1.61.
+  - Thankfully, the already published code for v0.1.6 works just fine on 1.56,
+    the only compilation issue was with an example.
 
 ## 0.1.6 - 2026-09-23
 Avoid trailing semicolon in expression macros.

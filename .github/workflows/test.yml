@@ -23,8 +23,9 @@ jobs:
       fail-fast: false # Even if one job fails we still want to see the other ones
       matrix:
         rust:
-          # Minimum Supported Rust Version
+          # Minimum Supported Rust Version (for `nounwind-macros`)
           #
+          # The MSRV for `nounwind` is tested separately in `include`
           # This is hardcoded and needs to be in sync with Cargo.toml and the README
           - 1.61
 
@@ -43,11 +44,21 @@ jobs:
         features:
           - "std"
           - "macros std"
+        exclude_args:
+          - ""
         include:
           - rust: stable
             features: "std macros"
           - rust: 1.61
             features: "old-rust-nostd"
+          - rust: 1.56
+            features: "old-rust-nostd"
+            # Need to exclude the macros crate, as its MSRV is newer than 1.56
+            exclude_args: "--exclude nounwind-macros"
+          - rust: 1.56
+            features: "std"
+            # Need to exclude the macros crate, as its MSRV is newer than 1.56
+            exclude_args: "--exclude nounwind-macros"
           - rust: stable
             features: ""
           - rust: nightly
@@ -80,7 +91,7 @@ jobs:
         # NOTE: Running --all-targets does not include doc tests
         # Does not compile benchmarks because they break on MSRV. Still checked by clippy
         run: |
-          cargo test --verbose --no-default-features --features "${{ matrix.features }}" --workspace
+          cargo test --verbose --no-default-features --features "${{ matrix.features }}" --workspace ${{ matrix.exclude_args }}
 
   clippy:
     # Only run on PRs if the source branch is on someone else's repo
