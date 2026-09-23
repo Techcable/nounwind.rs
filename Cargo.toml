@@ -10,6 +10,7 @@ repository = "https://github.com/Techcable/nounwind.rs"
 # 1.58 - format! captures local variables
 # 1.61 - dep:foo and foo?/std syntax
 # 1.64 - workspace inheritance
+# 1.71 - syn@v3
 # 1.81 - unwinding through extern "C" triggers panics
 rust-version = "1.56"
 edition = "2021"

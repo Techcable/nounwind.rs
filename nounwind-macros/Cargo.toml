@@ -5,8 +5,8 @@ version = "0.1.1"
 readme = "../README.md"
 license = "Apache-2.0 OR MIT"
 repository = "https://github.com/Techcable/nounwind.rs"
-# Keep in sync with main `nounwind` crate
-rust-version = "1.61"
+# 1.71 - syn@v3
+rust-version = "1.71"
 edition = "2021"
 categories = [
     "no-std",
@@ -22,5 +22,5 @@ proc-macro = true
 [dependencies]
 proc-macro2 = "1"
 quote = "1"
-syn = "2"
-syn-mid = "0.6"
+syn = "3"
+syn-mid = "0.7"

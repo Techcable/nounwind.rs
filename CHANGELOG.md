@@ -14,6 +14,10 @@ Old versions (before v0.1.6) were retroactively given CHANGELOG entries based on
 
 ## Unreleased
 
+### Changed
+- Updated `nounwind-macros` to syn v3.0 (vtyrwsts)
+- Increased `nounwind-macros` MSRV to v1.71 to match syn (vtyrwsts)
+
 ### Fixed
 - In examples and tests, avoid using `format!` with local variable references. (nllntsny)
   - Fixes examples and tests failing to compile on the MSRV of 1.56.

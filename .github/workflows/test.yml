@@ -27,7 +27,7 @@ jobs:
           #
           # The MSRV for `nounwind` is tested separately in `include`
           # This is hardcoded and needs to be in sync with Cargo.toml and the README
-          - 1.61
+          - 1.71
 
           # Intermediate Releases (between MSRV and latest stable)
           # Be careful not to add these needlessly; they hold up CI
@@ -50,6 +50,14 @@ jobs:
         include:
           - rust: stable
             features: "std macros"
+          - rust: 1.61
+            features: "old-rust-nostd"
+            # Need to exclude the macros crate, as its MSRV is newer than 1.56
+            exclude_args: "--exclude nounwind-macros"
+          - rust: 1.61
+            features: "std"
+            # Need to exclude the macros crate, as its MSRV is newer than 1.56
+            exclude_args: "--exclude nounwind-macros"
           - rust: 1.56
             features: "old-rust-nostd"
             # Need to exclude the macros crate, as its MSRV is newer than 1.56
