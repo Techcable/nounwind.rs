@@ -278,3 +278,28 @@ macro_rules! unreachable_nounwind {
 pub fn panic_nounwind(s: &'static str) -> ! {
     panic_internals::panic_nounwind_fmt(format_args!("{}", s))
 }
+
+#[cfg(test)]
+mod compile_tests {
+    /// A test that only checks for compilation errors,
+    /// without actually running anything.
+    fn compile_test(x: impl FnOnce()) {
+        let _ = x;
+    }
+
+    #[test]
+    fn basics() {
+        #[allow(unreachable_code)]
+        compile_test(|| {
+            // panic_nounwind!(); // not currently supported
+            panic_nounwind!("hello world");
+            panic_nounwind!("hello world from {}", "Arizona");
+            unreachable_nounwind!();
+            unreachable_nounwind!("that's impossible");
+            unreachable_nounwind!("that's impossible times {}", 7);
+            assert_nounwind!(true);
+            assert_nounwind!(false, "what happened?");
+            assert_nounwind!(false, "what happened at {} PM?", 6);
+        });
+    }
+}

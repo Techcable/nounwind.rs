@@ -19,6 +19,7 @@ Old versions (before v0.1.6) were retroactively given CHANGELOG entries based on
   - For consistency with the stdlib renaming `abort_unwind` to `abort_on_unwind`
   - For now, the alias points from the new name to the old name.
     I plan to wait a while before I rename the main function.
+- Add basic compilation tests for macros (yxuzwrom)
 
 ### Fixed
 - Remove dead doc references to `std::panic::abort_unwind` (nxooollt)
