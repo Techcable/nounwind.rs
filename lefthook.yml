@@ -22,8 +22,8 @@ pre-commit:
     typos:
       tags: spellcheck
       run: typos --force-exclude --format=brief -- {staged_files}
-    cargo-rdme:
-      run: cargo rdme --check
+    cargo-reedme:
+      run: cargo reedme --check
       glob:
         - "src/lib.rs"
         - "README.md"

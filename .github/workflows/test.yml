@@ -138,31 +138,26 @@ jobs:
       - name: Docs
         run: |
           cargo doc --verbose --no-default-features --features "${{ matrix.features }}"
-  cargo-rdme:
+  cargo-reedme:
     # Only run on PRs if the source branch is on someone else's repo
     if: ${{ github.event_name != 'pull_request' || github.repository != github.event.pull_request.head.repo.full_name }}
 
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
-      - uses: dtolnay/rust-toolchain@stable
+      - uses: dtolnay/rust-toolchain@nightly
         with:
           components: rust-src
-      # need to cache cargo-rdme to avoid redundant install
-      - name: Cache Binaries
-        id: cache-binaries
-        uses: actions/cache@v4
+
+      - uses: taiki-e/cache-cargo-install-action@v3  # not supported by regular install action
         with:
-          path:
-            ~/.cargo/bin/cargo-rdme
-          key: ${{ runner.os }}-binary-cargo-rdme
-      - name: Install cargo-rdme
-        shell: bash
-        # NOTE: This doesn't worry about installing updates
+          tool: cargo-reedme
+
+      - uses: Swatinem/rust-cache@v2
+        with:
+          # cached separately
+          cache-bin: false
+
+      - name: Run cargo-reedme
         run: |
-          if test ! -f "$HOME/.cargo/bin/cargo-rdme"; then
-            cargo install cargo-rdme
-          fi
-      - name: Run cargo-rdme
-        run: |
-          cargo rdme --check
+          cargo reedme --check -p nounwind

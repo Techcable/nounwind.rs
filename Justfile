@@ -5,7 +5,7 @@ test: _check && check-format
 check: _check lint
 
 lint: && check-format
-    cargo rdme --check
+    cargo reedme --check -p nounwind
     lychee README.md
 
 _check:

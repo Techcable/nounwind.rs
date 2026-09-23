@@ -16,6 +16,7 @@ Old versions (before v0.1.6) were retroactively given CHANGELOG entries based on
 
 ### Changed
 - Do not track `Cargo.lock` in version control (yqxpqkkz)
+- Switch from cargo-rdme to cargo-reedme (rqzwrlnq)
 
 ## 0.1.5
 Add `#[track_caller]` to internal `panic_nounwind_fmt`, fixing `panic_nounwind!` location info.
