@@ -23,9 +23,14 @@ Old versions (before v0.1.6) were retroactively given CHANGELOG entries based on
 - Allow using `panic_nounwind!` with no arguments (xxpkqqyp)
 
 ### Fixed
+- Avoid trailing semicolon in expression macros, fixing `#[warn(semicolon_in_expressions_from_macros)]` (qxlouwyx)
+  - This falls under the `#[warn(future_incompatible)]` group, so will cause issues in later rust.
+  - This avoids the new `#[warn(semicolon_in_expressions_from_non_local_macros)]` lint in user code (see [rust#162872])
 - Remove dead doc references to `std::panic::abort_unwind` (nxooollt)
   - Renamed to `std::panic::abort_on_unwind`
 - Allow trailing comma in single-argument `assert_nounwind!` (qtkroysn)
+
+[rust#162872]: https://github.com/rust-lang/rust/issues/162872
 
 ### Changed
 - Do not track `Cargo.lock` in version control (yqxpqkkz)

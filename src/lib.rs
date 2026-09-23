@@ -206,7 +206,7 @@ macro_rules! assert_nounwind {
     ($cond:expr $(,)?) => {
         if !($cond) {
             $crate::panic_nounwind(concat!("assertion failed: ", stringify!($cond)));
-        };
+        }
     };
     ($cond:expr, $($arg:tt)+) => {
         if !($cond) {
@@ -250,7 +250,7 @@ macro_rules! unreachable_nounwind {
         $crate::panic_nounwind!(
             "internal error: entered unreachable code: {}",
             format_args!($($arg)*)
-        );
+        )
     }
 }
 
@@ -314,5 +314,23 @@ mod compile_tests {
             assert_nounwind!(false, "rule?",);
             assert_nounwind!(true,);
         })
+    }
+
+    #[test]
+    #[deny(semicolon_in_expressions_from_macros)]
+    #[allow(clippy::unnecessary_literal_unwrap, clippy::let_unit_value)]
+    fn semicolon_expr() {
+        compile_test(|| {
+            let _ = Some(3u32).unwrap_or_else(|| panic_nounwind!());
+            let _ = Some(3u32).unwrap_or_else(|| panic_nounwind!("hello world"));
+            let _ = Some(3u32).unwrap_or_else(|| panic_nounwind!("hello world at {} PM", 3));
+            let _ = Some(3u32).unwrap_or_else(|| unreachable_nounwind!());
+            let _ = Some(3u32).unwrap_or_else(|| unreachable_nounwind!("hello world"));
+            let _ = Some(3u32).unwrap_or_else(|| unreachable_nounwind!("hello world at {} pm", 3));
+            let cond = true;
+            let _ = Some(()).unwrap_or_else(|| assert_nounwind!(cond));
+            let _ = Some(()).unwrap_or_else(|| assert_nounwind!(cond, "hello world"));
+            let _ = Some(()).unwrap_or_else(|| assert_nounwind!(cond, "hello world at {} pm", 3));
+        });
     }
 }
