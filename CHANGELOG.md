@@ -22,6 +22,7 @@ Old versions (before v0.1.6) were retroactively given CHANGELOG entries based on
   - Before this, we were only testing the newer `unwind-macro` MSRV of 1.61.
   - Thankfully, the already published code for v0.1.6 works just fine on 1.56,
     the only compilation issue was with an example.
+- ci: Fix newer syn dependencies breaking the build on Rust 1.56 (zrnmspqo)
 
 ## 0.1.6 - 2026-09-23
 Avoid trailing semicolon in expression macros.

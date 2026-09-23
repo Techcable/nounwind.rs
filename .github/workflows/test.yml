@@ -78,6 +78,16 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-cargo-
         continue-on-error: false
+      - name: Remove syn from excluded macro crate
+        # Excluding nounwind-macros doesn't stop cargo from resolving its dependencies.
+        # Before cargo 1.60, every syn v3 release is invisible (they use the v2 index schema),
+        # so resolution fails. The macro crate is never compiled, so just drop the dependencies.
+        #
+        # Must run before pinning, so the lockfile doesn't reference syn.
+        # NOTE: `cargo remove` requires cargo 1.66
+        if: ${{ contains(matrix.exclude_args, 'nounwind-macros') }}
+        run: |
+          cargo +stable remove -p nounwind-macros syn syn-mid
       - name: Pin MSRV-compatible versions
         if: ${{ contains(matrix.rust, '1.') }}
         env:
