@@ -85,6 +85,7 @@ jobs:
           CARGO_RESOLVER_INCOMPATIBLE_RUST_VERSIONS: fallback
         run: |
           rm -f Cargo.lock
+          rustc +stable --version
           cargo +stable update
       - name: Test
         # NOTE: Running --all-targets does not include doc tests
