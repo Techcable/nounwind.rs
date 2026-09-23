@@ -8,7 +8,7 @@
 //! Similar [`assert_nounwind!`] and [`unreachable_nounwind!`] macros are offered,
 //! which are convenience wrappers around [`panic_nounwind!`].
 //!
-//! The crate also provides a polyfill for the nightly [`std::panic::abort_unwind`] function.
+//! The crate also provides a polyfill for the nightly [`std::panic::abort_on_unwind`] function.
 //! This provides more detailed control over what sections of code can and cannot panic.
 //! It can also be used as a replacement to `#[nounwind]` if you want to avoid a macro dependency.
 //!
@@ -26,7 +26,7 @@
 //! This will use [`libabort`] to provide a polyfill for [`std::process::abort`].
 //!
 //! [`libabort`]: https://github.com/Techcable/libabort.rs
-//! [`std::panic::abort_unwind`]: https://doc.rust-lang.org/nightly/std/panic/fn.abort_unwind.html
+//! [`std::panic::abort_on_unwind`]: https://doc.rust-lang.org/nightly/std/panic/fn.abort_on_unwind.html
 //! [`noexcept` specifier]: https://en.cppreference.com/w/cpp/language/noexcept_spec.html
 //! [`std::process::abort`]: https://doc.rust-lang.org/std/process/fn.abort.html
 #![cfg_attr(docsrs, feature(doc_cfg))]
@@ -105,7 +105,7 @@ mod abort_guard {
 decl_abort_unwind! {
     /// Invokes a closure, aborting if the closure unwinds.
     ///
-    /// This is equivalent to the nightly-only [`std::panic::abort_unwind`] function.
+    /// This is equivalent to the nightly-only [`std::panic::abort_on_unwind`] function.
     ///
     /// Prefer the [`panic_nounwind!`] macro to `abort_unwind(|| panic!(...))`,
     /// as the first gives a confusing error message.
@@ -121,7 +121,7 @@ decl_abort_unwind! {
     /// On older versions of Rust, and when `feature = "std"` is not enabled,
     /// this will fall back to using [`libabort`](https://github.com/Techcable/libabort.rs).
     ///
-    /// [`std::panic::abort_unwind`]: https://doc.rust-lang.org/nightly/std/panic/fn.abort_unwind.html
+    /// [`std::panic::abort_on_unwind`]: https://doc.rust-lang.org/nightly/std/panic/fn.abort_on_unwind.html
     ///
     /// # Examples
     /// ```

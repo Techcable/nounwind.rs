@@ -14,6 +14,10 @@ Old versions (before v0.1.6) were retroactively given CHANGELOG entries based on
 
 ## Unreleased
 
+### Fixed
+- Remove dead doc references to `std::panic::abort_unwind` (nxooollt)
+  - Renamed to `std::panic::abort_on_unwind`
+
 ### Changed
 - Do not track `Cargo.lock` in version control (yqxpqkkz)
 - Switch from cargo-rdme to cargo-reedme (rqzwrlnq)

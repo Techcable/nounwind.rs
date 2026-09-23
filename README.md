@@ -17,7 +17,7 @@ In particular, if proceeding could cause undefined behavior,
 Similar [`assert_nounwind!`](https://docs.rs/nounwind/latest/nounwind/macro.assert_nounwind.html) and [`unreachable_nounwind!`](https://docs.rs/nounwind/latest/nounwind/macro.unreachable_nounwind.html) macros are offered,
 which are convenience wrappers around [`panic_nounwind!`](https://docs.rs/nounwind/latest/nounwind/macro.panic_nounwind.html).
 
-The crate also provides a polyfill for the nightly [`std::panic::abort_unwind`] function.
+The crate also provides a polyfill for the nightly [`std::panic::abort_on_unwind`] function.
 This provides more detailed control over what sections of code can and cannot panic.
 It can also be used as a replacement to `#[nounwind]` if you want to avoid a macro dependency.
 
@@ -35,7 +35,7 @@ enable the `old-rust-nostd` feature.
 This will use [`libabort`] to provide a polyfill for [`std::process::abort`].
 
 [`libabort`]: https://github.com/Techcable/libabort.rs
-[`std::panic::abort_unwind`]: https://doc.rust-lang.org/nightly/std/panic/fn.abort_unwind.html
+[`std::panic::abort_on_unwind`]: https://doc.rust-lang.org/nightly/std/panic/fn.abort_on_unwind.html
 [`noexcept` specifier]: https://en.cppreference.com/w/cpp/language/noexcept_spec.html
 [`std::process::abort`]: https://doc.rust-lang.org/std/process/fn.abort.html
 
