@@ -14,7 +14,7 @@ pub fn unreachable_nounwind() -> ! {
 /// due to lifetime temporary extension issues on versions before Rust 1.89.
 ///
 /// # Purpose
-/// This optimization benefits constant messages by avoiding expesnive formatting machinery.
+/// This optimization benefits constant messages by avoiding expensive formatting machinery.
 /// In particular this means `panic_nounwind!("msg")` will lower to `panic_nounwind("msg")`,
 /// eliminating the `panic_nounwind_fmt` call which requires much more code to invoke.
 ///
