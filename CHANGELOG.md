@@ -20,6 +20,7 @@ Old versions (before v0.1.6) were retroactively given CHANGELOG entries based on
   - For now, the alias points from the new name to the old name.
     I plan to wait a while before I rename the main function.
 - Add basic compilation tests for macros (yxuzwrom)
+- Allow using `panic_nounwind!` with no arguments (xxpkqqyp)
 
 ### Fixed
 - Remove dead doc references to `std::panic::abort_unwind` (nxooollt)

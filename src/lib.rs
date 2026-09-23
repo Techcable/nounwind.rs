@@ -176,9 +176,11 @@ pub use abort_unwind as abort_on_unwind;
 /// let x = 7;
 /// panic_nounwind!("hello {x}"); // prints "hello 7"
 /// panic_nounwind!("hello {{}}"); // prints "hello {}"
+/// panic_nounwind!(); // prints "explicit panic_nounwind"
 /// ```
 #[macro_export]
 macro_rules! panic_nounwind {
+    () => ($crate::panic_nounwind!("explicit panic_nounwind"));
     ($($arg:tt)*) => {
         // call helper function that optimizes for constant strings
         $crate::panic_internals::do_panic_nounwind(format_args!($($arg)*))
@@ -291,7 +293,7 @@ mod compile_tests {
     fn basics() {
         #[allow(unreachable_code)]
         compile_test(|| {
-            // panic_nounwind!(); // not currently supported
+            panic_nounwind!();
             panic_nounwind!("hello world");
             panic_nounwind!("hello world from {}", "Arizona");
             unreachable_nounwind!();
