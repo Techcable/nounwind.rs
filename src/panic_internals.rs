@@ -10,7 +10,7 @@ pub fn unreachable_nounwind() -> ! {
 /// Implementation detail of the [`crate::panic_nounwind!`] macro,
 /// used to optimize for constant strings.
 ///
-/// Needs to be a sepearete function rather than part of the macro
+/// Needs to be a separate function rather than part of the macro
 /// due to lifetime temporary extension issues on versions before Rust 1.89.
 ///
 /// # Purpose
@@ -19,14 +19,14 @@ pub fn unreachable_nounwind() -> ! {
 /// eliminating the `panic_nounwind_fmt` call which requires much more code to invoke.
 ///
 /// In theory, this branch can have a slight runtime and code-size cost
-/// if the direction of cannot be statically determined.
+/// if the direction of the branch cannot be statically determined.
 /// In practice, the direction of the branch and the value of the message
 /// are always resolved at compile time.
 /// This fact is relied upon by the implementation of `fmt::Arguments::as_statically_known_str`,
-/// which just tests `llvm.isconstant` on the result of as `as_str`.
+/// which just tests `llvm.isconstant` on the result of `as_str`.
 /// Even in the unlikely case the `as_str` cannot be resolved at compile time,
 /// the cold path is so much more costly in code-size that this is worth the risk.
-//
+///
 /// This also trusts `fmt::Arguments::as_str` never to panic,
 /// which is true on every supported rust version.
 /// We could use [`crate::abort_unwind`] to ensure this is true.

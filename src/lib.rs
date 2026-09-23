@@ -15,7 +15,7 @@
 //!
 //! Using `#[nounwind]` is clearer than using a drop guard,
 //! and in some versions of Rust can provide a better error message.
-//! In particular, on recent versions of rust using `#[nounwind]` will print a messages like "panic in a function that cannot unwind".
+//! In particular, on recent versions of rust using `#[nounwind]` will print a message like "panic in a function that cannot unwind".
 //!
 //! Using [`panic_nounwind!`] is preferable to `abort_unwind(|| panic!(..))`, for reasons described in the [`abort_unwind`] docs.
 //!
@@ -111,7 +111,7 @@ decl_abort_unwind! {
     /// while keeping the old name for backwards compatibility.
     ///
     /// Prefer the [`panic_nounwind!`] macro to `abort_unwind(|| panic!(...))`,
-    /// as the first gives a confusing error message.
+    /// as the latter gives a confusing error message.
     ///
     /// As of Rust 1.92, this will print a second panic message "panic in a function that cannot unwind".
     /// This is usually a desirable outcome, but also explains why `abort_unwind(|| panic!(user_msg))` gives a confusing message.
@@ -121,7 +121,7 @@ decl_abort_unwind! {
     /// This makes it even harder to notice the real error message.
     /// Using [`panic_nounwind!`] avoids that.
     ///
-    /// On older versions of Rust, and when `feature = "std"` is not enabled,
+    /// On older versions of Rust, when `feature = "std"` is not enabled,
     /// this will fall back to using [`libabort`](https://github.com/Techcable/libabort.rs).
     ///
     /// [`std::panic::abort_on_unwind`]: https://doc.rust-lang.org/nightly/std/panic/fn.abort_on_unwind.html
@@ -190,7 +190,7 @@ macro_rules! panic_nounwind {
 /// Equivalent to [`core::assert!`], but guaranteed to abort the program instead of unwinding.
 ///
 /// This function is useful for checking invalid state which cannot possibly be repaired.
-/// In particular, this is more appropriate than [`core::assert!`] for checking soundess errors.
+/// In particular, this is more appropriate than [`core::assert!`] for checking soundness errors.
 /// See the [`panic_nounwind!`] macro and [`unreachable_nounwind!`] for details.
 ///
 /// # Examples
@@ -246,7 +246,7 @@ macro_rules! unreachable_nounwind {
     ($($arg:tt)+) => {
         // if the format string is a literal string,
         // the rust compiler will optimize this nested formatting into a constant message
-        // So `unreachable_nowunind!("msg")` lowers directly to `nounwind_panic("...")`
+        // So `unreachable_nowunwind!("msg")` lowers directly to `nounwind_panic("...")`
         $crate::panic_nounwind!(
             "internal error: entered unreachable code: {}",
             format_args!($($arg)*)
@@ -264,7 +264,7 @@ macro_rules! unreachable_nounwind {
 ///
 /// This function preserves location information (it is marked with `#[track_caller]`).
 /// This slightly increases code size in the caller,
-/// which can avoided by outlining the panic call or switching to [`std::process::abort`].
+/// which can be avoided by outlining the panic call or switching to [`std::process::abort`].
 ///
 /// [`core::panicking::panic_nounwind`]: https://github.com/rust-lang/rust/blob/1.92.0/library/core/src/panicking.rs#L222-L231
 /// [`std::process::abort`]: https://doc.rust-lang.org/std/process/fn.abort.html

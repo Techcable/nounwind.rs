@@ -24,7 +24,7 @@ It can also be used as a replacement to `#[nounwind]` if you want to avoid a mac
 
 Using `#[nounwind]` is clearer than using a drop guard,
 and in some versions of Rust can provide a better error message.
-In particular, on recent versions of rust using `#[nounwind]` will print a messages like “panic in a function that cannot unwind”.
+In particular, on recent versions of rust using `#[nounwind]` will print a message like “panic in a function that cannot unwind”.
 
 Using [`panic_nounwind!`](https://docs.rs/nounwind/latest/nounwind/macro.panic_nounwind.html) is preferable to `abort_unwind(|| panic!(..))`, for reasons described in the [`abort_unwind`](https://docs.rs/nounwind/latest/nounwind/fn.abort_unwind.html) docs.
 

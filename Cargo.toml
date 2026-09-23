@@ -1,6 +1,6 @@
 [package]
 name = "nounwind"
-description = "A attribute macro to prevent panics from unwinding, similar to C++ noexcept"
+description = "An attribute macro to prevent panics from unwinding, similar to C++ noexcept"
 version = "0.1.5"
 readme = "README.md"
 license = "Apache-2.0 OR MIT"
@@ -36,7 +36,7 @@ default = ["macros", "old-rust-nostd"]
 #
 # If this is enabled, the `old-rust-nostd` feature is not needed.
 std = []
-# Define the #{nounwind] attribute macro
+# Define the #[nounwind] attribute macro
 macros = ["nounwind-macros"]
 # Support versions of rust before 1.81 without needing the stdlib.
 #
