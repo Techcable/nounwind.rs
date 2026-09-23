@@ -130,7 +130,7 @@ decl_abort_unwind! {
     /// ```
     /// fn print_nounwind(msg: &str) {
     ///     nounwind::abort_unwind(|| {
-    ///         println!("{msg}");
+    ///         println!("{}", msg);
     ///     });
     /// }
     /// print_nounwind("foo");
@@ -173,8 +173,7 @@ pub use abort_unwind as abort_on_unwind;
 /// ```no_run
 /// # use nounwind::panic_nounwind;
 /// panic_nounwind!("hello"); // prints "hello"
-/// let x = 7;
-/// panic_nounwind!("hello {x}"); // prints "hello 7"
+/// panic_nounwind!("hello {x}", x = 7); // prints "hello 7"
 /// panic_nounwind!("hello {{}}"); // prints "hello {}"
 /// panic_nounwind!(); // prints "explicit panic_nounwind"
 /// ```
@@ -197,8 +196,7 @@ macro_rules! panic_nounwind {
 /// ```
 /// nounwind::assert_nounwind!(3 + 7 > 2); // would print "assertion failed: 3 + 7 > 2"
 /// nounwind::assert_nounwind!(3 + 7 > 2, "message"); // would print "message"
-/// let x = 7;
-/// nounwind::assert_nounwind!(3 + 7 > 2, "message {x}"); // would print "message 7"
+/// nounwind::assert_nounwind!(3 + 7 > 2, "message {}", x = 7); // would print "message 7"
 /// nounwind::assert_nounwind!(3 + 7 > 2, "message {{}}"); // would print "message {}"
 /// ```
 #[macro_export]

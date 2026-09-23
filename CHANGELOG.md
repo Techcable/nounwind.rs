@@ -14,6 +14,11 @@ Old versions (before v0.1.6) were retroactively given CHANGELOG entries based on
 
 ## Unreleased
 
+### Fixed
+- In examples and tests, avoid using `format!` with local variable references. (nllntsny)
+  - Fixes examples and tests failing to compile on the MSRV of 1.56.
+  - This issue cannot affect any of our dependencies.
+
 ## 0.1.6 - 2026-09-23
 Avoid trailing semicolon in expression macros.
 
