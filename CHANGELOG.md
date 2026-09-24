@@ -14,6 +14,9 @@ Old versions (before v0.1.6) were retroactively given CHANGELOG entries based on
 
 ## Unreleased
 
+## 0.1.7 - 2026-09-23
+Updated `nounwind-macros` to syn v3.0.
+
 ### Changed
 - Updated `nounwind-macros` to syn v3.0 (vtyrwsts)
 - Increased `nounwind-macros` MSRV to v1.71 to match syn (vtyrwsts)
@@ -27,6 +30,8 @@ Old versions (before v0.1.6) were retroactively given CHANGELOG entries based on
   - Thankfully, the already published code for v0.1.6 works just fine on 1.56,
     the only compilation issue was with an example.
 - ci: Fix newer syn dependencies breaking the build on Rust 1.56 (zrnmspqo)
+
+This is the first release of `nounwind-macros` since v0.1.1.
 
 ## 0.1.6 - 2026-09-23
 Avoid trailing semicolon in expression macros.
